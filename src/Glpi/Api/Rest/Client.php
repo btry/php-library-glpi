@@ -74,6 +74,10 @@ class Client {
       return $this->sessionToken;
    }
 
+   public function setSessionToken($token) {
+      $this->sessionToken = $token;
+   }
+
    /**
     * Initialize a session with user credentials
     * @param string $user
@@ -83,10 +87,11 @@ class Client {
     */
    public function initSessionByCredentials($user, $password) {
       $response = $this->request('get', 'initSession', ['auth' => [$user, $password]]);
+      $body = $response->getBody()->getContents();
       if ($response->getStatusCode() != 200
-         || !$this->sessionToken = json_decode($response->getBody()->getContents(), true)['session_token']) {
-         $body = json_decode($response->getBody()->getContents());
-         throw new Exception(ErrorHandler::getMessage($body[0]));
+         || !$this->sessionToken = json_decode($body, true)['session_token']) {
+         $body = json_decode($body);
+         throw new Exception(ErrorHandler::getMessage($body[1]));
       }
       return true;
    }
@@ -110,10 +115,11 @@ class Client {
             ],
          ]
       );
+      $body = $response->getBody()->getContents();
       if ($response->getStatusCode() != 200
-         || !$this->sessionToken = json_decode($response->getBody()->getContents(), true)['session_token']) {
-         $body = json_decode($response->getBody()->getContents());
-         throw new Exception(ErrorHandler::getMessage($body[0]));
+         || !$this->sessionToken = json_decode($body, true)['session_token']) {
+         $body = json_decode($body);
+         throw new Exception(ErrorHandler::getMessage($body[1]));
       }
       return true;
    }
